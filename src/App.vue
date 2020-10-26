@@ -45,6 +45,12 @@ export default {
   components: {
     WeatherForm
   },
+  watch: {
+    location: function() {
+      //When location change, fetch new weather data api depending on the new location
+      this.getData();
+    }
+  },
   computed: {
     temperature: function() {
       return Math.floor(this.temp - 273.15);
