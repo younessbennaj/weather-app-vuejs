@@ -1,5 +1,5 @@
 <template>
-    <form class="form">
+    <form v-on:submit.prevent="onSubmit" class="form">
         <select v-model="location" class="form__select" name="location" id="location">
           <option v-for="city in cities" :key="city" v-bind:value="city">{{city}}</option>
         </select>
@@ -10,10 +10,15 @@
 <script>
 export default {
   name: "WeatherForm",
+  props: ["onLocationChange"],
   data() {
     return {
       cities: ["nice", "lyon", "paris"],
-      location: "paris"
+      location: "paris",
+      onSubmit: () => {
+        console.log("submit");
+        this.onLocationChange(this.location);
+      }
     };
   }
 };

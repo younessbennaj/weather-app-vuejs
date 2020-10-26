@@ -7,7 +7,7 @@
         </select>
         <input class="form__button" type="submit" value="Search">
       </form> -->
-      <WeatherForm />
+      <WeatherForm v-bind:on-location-change="onLocationChange" />
       <div class="widget">
         <img v-bind:src="weatherIcon" alt="">
         <p class="widget__temp">{{temperature}}<span class="widget__temp--celcius">ºC</span></p>
@@ -45,6 +45,12 @@ export default {
   components: {
     WeatherForm
   },
+  watch: {
+    location: function() {
+      //When location change, fetch new weather data api depending on the new location
+      this.getData();
+    }
+  },
   computed: {
     temperature: function() {
       return Math.floor(this.temp - 273.15);
@@ -55,44 +61,32 @@ export default {
     },
     weatherIcon: function() {
       let icon = null;
-
-      console.log(this.weatherId);
-      // console.log(this.weatherId);
       switch (this.weatherId) {
         case "01d":
-          console.log("clear");
           icon = clearIcon;
           break;
         case "02d":
-          console.log("few clouds");
           icon = lightCloud;
           break;
         case "03d":
-          console.log("cloud");
           icon = heavyCloud;
           break;
         case "04d":
-          console.log("cloud");
           icon = heavyCloud;
           break;
         case "09d":
-          console.log("shower");
           icon = shower;
           break;
         case "10d":
-          console.log("Heavy Rain");
           icon = heavyRain;
           break;
         case "11d":
-          console.log("thunderstorm");
           icon = thunderstorm;
           break;
         case "13d":
-          console.log("snow");
           icon = snow;
           break;
         default:
-          console.log("No icon");
           icon = heavyCloud;
       }
       // return icon;
@@ -132,6 +126,10 @@ export default {
       temp: 273.15,
       unix: null,
       weatherId: null,
+      onLocationChange: location => {
+        console.log("location change", location);
+        this.location = location;
+      },
       cities: ["paris", "nice", "lyon", "rennes"]
     };
   }
