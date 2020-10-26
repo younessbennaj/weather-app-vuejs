@@ -13,6 +13,7 @@
         <p class="widget__date">{{date}}</p>
         <h2 class="widget__location"><i class="material-icons icon">location_on</i> <span class="widget__location-text">{{location}}</span></h2>
         <p class="error">{{error}}</p>
+        <span>{{weatherIcon}}</span>
     </div>
     </section>
     <main class="main">
@@ -46,7 +47,17 @@ export default {
       return dateString.locale("fr").format("LL");
     },
     weatherIcon: function() {
-      return null;
+      let icon = null;
+      // console.log(this.weatherId);
+      switch (this.weatherId) {
+        case "8":
+          console.log("Clear");
+          break;
+        default:
+          console.log("No icon");
+      }
+      // return icon;
+      return icon;
     }
   },
   methods: {
