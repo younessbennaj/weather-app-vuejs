@@ -30,6 +30,10 @@ import WeatherForm from "./components/WeatherForm.vue";
 
 export default {
   name: "App",
+  mounted() {
+    //Called on first rendering
+    this.getData();
+  },
   components: {
     WeatherForm
   },
@@ -40,6 +44,9 @@ export default {
     date: function() {
       let dateString = moment.unix(this.unix);
       return dateString.locale("fr").format("LL");
+    },
+    weatherIcon: function() {
+      return null;
     }
   },
   methods: {
@@ -56,6 +63,9 @@ export default {
           response => {
             //Set the new weather data to data local state
             this.data = response.data;
+            this.unix = response.data.dt;
+            this.temp = response.data.main.temp;
+            this.weatherId = response.data.weather[0].id.toString().slice(0, 1);
             this.error = null;
           },
           () => {
@@ -69,8 +79,9 @@ export default {
       location: "paris",
       error: null,
       data: null,
-      temp: 289.73,
-      unix: 1603363981,
+      temp: 273.15,
+      unix: null,
+      weatherId: null,
       cities: ["paris", "nice", "lyon", "rennes"]
     };
   }
