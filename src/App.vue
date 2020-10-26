@@ -1,18 +1,18 @@
 <template>
   <div class="container">
     <section class="sidebar">
-    <form class="form">
-        <select class="form__select" name="location" id="location">
-          <option value="paris">paris</option>
-          <option value="nice">nice</option>
-          <option value="lyon">lyon</option>
+    <!-- <form class="form">
+        <select v-model="location" class="form__select" name="location" id="location">
+          <option v-for="city in cities" :key="city" v-bind:value="city">{{city}}</option>
         </select>
         <input class="form__button" type="submit" value="Search">
-      </form>
+      </form> -->
+      <WeatherForm />
       <div class="widget">
-        <p class="widget__temp">30<span class="widget__temp--celcius">ºC</span></p>
-        <p class="widget__date">Today</p>
-        <h2 class="widget__location"><i class="material-icons icon">location_on</i> <span class="sidebar__location-text">Paris</span></h2>
+        <p class="widget__temp">{{temperature}}<span class="widget__temp--celcius">ºC</span></p>
+        <p class="widget__date">{{date}}</p>
+        <h2 class="widget__location"><i class="material-icons icon">location_on</i> <span class="widget__location-text">{{location}}</span></h2>
+        <p class="error">{{error}}</p>
     </div>
     </section>
     <main class="main">
@@ -22,12 +22,57 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+import axios from "axios";
+import moment from "moment";
+import WeatherForm from "./components/WeatherForm.vue";
+
+//Convert Kelvin in Celcius, needed due to the api return temperature in Kelvin
 
 export default {
   name: "App",
   components: {
-    // HelloWorld
+    WeatherForm
+  },
+  computed: {
+    temperature: function() {
+      return Math.floor(this.temp - 273.15);
+    },
+    date: function() {
+      let dateString = moment.unix(this.unix);
+      return dateString.locale("fr").format("LL");
+    }
+  },
+  methods: {
+    getData: function() {
+      //this method is called when we need to retrieve the weather data
+      //for a precise location
+      axios
+        .get(
+          `http://api.openweathermap.org/data/2.5/weather?q=${
+            this.location
+          }&appid=d8226f44f17257daa0c78241180a1474`
+        )
+        .then(
+          response => {
+            //Set the new weather data to data local state
+            this.data = response.data;
+            this.error = null;
+          },
+          () => {
+            this.error = "Impossible de récupérer la méteo";
+          }
+        );
+    }
+  },
+  data() {
+    return {
+      location: "paris",
+      error: null,
+      data: null,
+      temp: 289.73,
+      unix: 1603363981,
+      cities: ["paris", "nice", "lyon", "rennes"]
+    };
   }
 };
 </script>
@@ -59,7 +104,7 @@ export default {
   background: #100e1d;
 }
 
-.form {
+/* .form {
   width: 100%;
   display: flex;
   justify-content: flex-start;
@@ -93,7 +138,7 @@ export default {
 option {
   height: 64px;
   text-transform: uppercase;
-}
+} */
 
 .widget {
   grid-column-start: 1;
@@ -115,7 +160,8 @@ option {
 .widget__location-text {
   text-transform: capitalize;
 }
-.widget__location-text i {
+
+i {
   vertical-align: bottom;
 }
 
