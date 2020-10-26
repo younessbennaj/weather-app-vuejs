@@ -9,6 +9,7 @@
       </form> -->
       <WeatherForm />
       <div class="widget">
+        <img v-bind:src="weatherIcon" alt="">
         <p class="widget__temp">{{temperature}}<span class="widget__temp--celcius">ºC</span></p>
         <p class="widget__date">{{date}}</p>
         <h2 class="widget__location"><i class="material-icons icon">location_on</i> <span class="widget__location-text">{{location}}</span></h2>
@@ -25,11 +26,22 @@
 import axios from "axios";
 import moment from "moment";
 import WeatherForm from "./components/WeatherForm.vue";
+import clearIcon from "./assets/Clear.png";
+import heavyCloud from "./assets/HeavyCloud.png";
+import lightCloud from "./assets/LightCloud.png";
+import shower from "./assets/Shower.png";
+import heavyRain from "./assets/HeavyRain.png";
+import thunderstorm from "./assets/Thunderstorm.png";
+import snow from "./assets/Snow.png";
 
 //Convert Kelvin in Celcius, needed due to the api return temperature in Kelvin
 
 export default {
   name: "App",
+  mounted() {
+    //Called on first rendering
+    this.getData();
+  },
   components: {
     WeatherForm
   },
@@ -40,6 +52,51 @@ export default {
     date: function() {
       let dateString = moment.unix(this.unix);
       return dateString.locale("fr").format("LL");
+    },
+    weatherIcon: function() {
+      let icon = null;
+
+      console.log(this.weatherId);
+      // console.log(this.weatherId);
+      switch (this.weatherId) {
+        case "01d":
+          console.log("clear");
+          icon = clearIcon;
+          break;
+        case "02d":
+          console.log("few clouds");
+          icon = lightCloud;
+          break;
+        case "03d":
+          console.log("cloud");
+          icon = heavyCloud;
+          break;
+        case "04d":
+          console.log("cloud");
+          icon = heavyCloud;
+          break;
+        case "09d":
+          console.log("shower");
+          icon = shower;
+          break;
+        case "10d":
+          console.log("Heavy Rain");
+          icon = heavyRain;
+          break;
+        case "11d":
+          console.log("thunderstorm");
+          icon = thunderstorm;
+          break;
+        case "13d":
+          console.log("snow");
+          icon = snow;
+          break;
+        default:
+          console.log("No icon");
+          icon = heavyCloud;
+      }
+      // return icon;
+      return icon;
     }
   },
   methods: {
@@ -56,6 +113,9 @@ export default {
           response => {
             //Set the new weather data to data local state
             this.data = response.data;
+            this.unix = response.data.dt;
+            this.temp = response.data.main.temp;
+            this.weatherId = response.data.weather[0].icon;
             this.error = null;
           },
           () => {
@@ -69,8 +129,9 @@ export default {
       location: "paris",
       error: null,
       data: null,
-      temp: 289.73,
-      unix: 1603363981,
+      temp: 273.15,
+      unix: null,
+      weatherId: null,
       cities: ["paris", "nice", "lyon", "rennes"]
     };
   }
